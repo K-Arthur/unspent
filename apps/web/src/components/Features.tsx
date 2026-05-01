@@ -35,7 +35,7 @@ export function Features() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature) => (
             <div key={feature.title} className="card text-center">
-              <div className="text-4xl mb-4">{feature.icon}</div>
+              <div className="text-4xl mb-4" aria-hidden="true">{feature.icon}</div>
               <h3 className="text-lg font-semibold text-text mb-2">{feature.title}</h3>
               <p className="text-text-secondary">{feature.description}</p>
             </div>

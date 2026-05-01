@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Image, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { useAuthStore } from '../../src/hooks/useAuthStore';
-import { useSubscriptionStore } from '../../src/hooks/useSubscriptionStore';
-import { colors } from '../../src/constants/colors';
+import { useAuthStore } from '../src/hooks/useAuthStore';
+import { useSubscriptionStore } from '../src/hooks/useSubscriptionStore';
+import { colors } from '../src/constants/colors';
 import { SUBSCRIPTION_PLANS } from '@unspent/shared/constants';
 
 export default function UpgradeScreen() {

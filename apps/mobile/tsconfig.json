@@ -12,11 +12,25 @@
     "target": "ESNext",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@unspent/shared": ["../../packages/shared/src"],
-      "@unspent/shared/*": ["../../packages/shared/src/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@unspent/shared": [
+        "../../packages/shared/src"
+      ],
+      "@unspent/shared/*": [
+        "../../packages/shared/src/*"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

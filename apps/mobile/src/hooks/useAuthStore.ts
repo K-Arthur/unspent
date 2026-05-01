@@ -13,6 +13,7 @@ interface Profile {
   birthDate: string | null;
   isPremium: boolean;
   freeVotesUsedThisWeek: number;
+  referralCode: string | null;
   createdAt: string;
 }
 
@@ -34,6 +35,7 @@ interface AuthState {
   refreshSession: () => Promise<void>;
   setSession: (session: Session | null) => void;
   fetchProfile: () => Promise<void>;
+  fetchPremiumStatus: (userId: string) => Promise<boolean>;
   createProfile: (username: string, birthDate?: string) => Promise<{ error: Error | null }>;
 }
 
@@ -83,15 +85,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   fetchPremiumStatus: async (userId: string) => {
     const { supabase } = get();
     if (!supabase) return false;
-    
+
     const { data } = await supabase
       .from('subscriptions')
-      .select('premium_until')
+      .select('current_period_end')
       .eq('user_id', userId)
       .eq('status', 'active')
       .single();
-    
-    return checkPremium(data?.premium_until);
+
+    return checkPremium(data?.current_period_end);
   },
 
   signUp: async (email, password) => {
@@ -182,6 +184,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           birthDate: profile.birth_date,
           isPremium: checkPremium(profile.premium_until),
           freeVotesUsedThisWeek: profile.free_votes_used_this_week,
+          referralCode: profile.referral_code ?? null,
           createdAt: profile.created_at,
         },
         isPremium: checkPremium(profile.premium_until),
@@ -204,6 +207,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!error) {
       await get().fetchProfile();
     }
-    
+
     return { error: error ?? null };
   },
+}));

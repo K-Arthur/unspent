@@ -26,13 +26,15 @@ export function Testimonials() {
         
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.name} className="card">
-              <p className="text-lg text-text mb-6">"{testimonial.quote}"</p>
+            <article key={testimonial.name} className="card">
+              <blockquote className="text-lg text-text mb-6">
+                <p>"{testimonial.quote}"</p>
+              </blockquote>
               <div className="border-t border-accent pt-4">
                 <p className="font-semibold text-text">{testimonial.name}</p>
                 <p className="text-sm text-text-secondary">{testimonial.role}</p>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>

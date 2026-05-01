@@ -23,7 +23,13 @@ export function CourtCard({ item, onPress }: CourtCardProps) {
   const total = item.voteCounts.buy + item.voteCounts.pass + item.voteCounts.dupe;
 
   return (
-    <Pressable style={styles.card} onPress={onPress}>
+    <Pressable
+      style={styles.card}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.title}, $${(item.price / 100).toFixed(2)}, by ${item.username}`}
+      accessibilityHint="Tap to view details and vote"
+    >
       <View style={styles.header}>
         <Avatar uri={item.userAvatar} name={item.username} size={32} />
         <Text style={styles.username}>@{item.username}</Text>
@@ -34,7 +40,7 @@ export function CourtCard({ item, onPress }: CourtCardProps) {
           <Image source={{ uri: item.imageUrl }} style={styles.image} />
         ) : (
           <View style={[styles.image, styles.placeholder]}>
-            <Text style={styles.placeholderText}>📦</Text>
+            <Text style={styles.placeholderText} accessibilityLabel="No image">📦</Text>
           </View>
         )}
         <View style={styles.details}>
@@ -47,15 +53,15 @@ export function CourtCard({ item, onPress }: CourtCardProps) {
       </View>
 
       <View style={styles.votes}>
-        <View style={styles.voteCount}>
+        <View style={styles.voteCount} accessibilityLabel={`${item.voteCounts.buy} buy votes`}>
           <View style={[styles.voteDot, { backgroundColor: '#2E7D32' }]} />
           <Text style={styles.voteCountText}>{item.voteCounts.buy}</Text>
         </View>
-        <View style={styles.voteCount}>
+        <View style={styles.voteCount} accessibilityLabel={`${item.voteCounts.pass} pass votes`}>
           <View style={[styles.voteDot, { backgroundColor: '#E65100' }]} />
           <Text style={styles.voteCountText}>{item.voteCounts.pass}</Text>
         </View>
-        <View style={styles.voteCount}>
+        <View style={styles.voteCount} accessibilityLabel={`${item.voteCounts.dupe} dupe votes`}>
           <View style={[styles.voteDot, { backgroundColor: '#0D47A1' }]} />
           <Text style={styles.voteCountText}>{item.voteCounts.dupe}</Text>
         </View>

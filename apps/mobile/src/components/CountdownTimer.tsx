@@ -55,14 +55,25 @@ export function CountdownTimer({ endTime, onExpire }: CountdownTimerProps) {
 
   if (timeLeft.isExpired) {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} accessibilityLabel="Cooldown complete">
         <Text style={styles.expiredText}>Ready!</Text>
       </View>
     );
   }
 
+  const timeLabel = [
+    timeLeft.hours > 0 && `${timeLeft.hours} hours`,
+    `${timeLeft.minutes} minutes`,
+    `${timeLeft.seconds} seconds`,
+  ].filter(Boolean).join(', ');
+
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessibilityLabel={`${timeLabel} remaining`}
+      accessibilityRole="timer"
+      accessibilityLiveRegion="polite"
+    >
       {timeLeft.hours > 0 && (
         <View style={styles.timeBlock}>
           <Text style={styles.timeValue}>{timeLeft.hours}</Text>

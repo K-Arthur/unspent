@@ -8,10 +8,15 @@ interface LockedFeatureProps {
 
 export function LockedFeature({ message, onUpgrade }: LockedFeatureProps) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.lock}>🔒</Text>
+    <View style={styles.container} accessibilityLabel="Premium feature locked">
+      <Text style={styles.lock} accessibilityLabel="Locked">🔒</Text>
       <Text style={styles.message}>{message}</Text>
-      <Pressable style={styles.upgradeButton} onPress={onUpgrade}>
+      <Pressable
+        style={styles.upgradeButton}
+        onPress={onUpgrade}
+        accessibilityRole="button"
+        accessibilityLabel="Upgrade to unlock this feature"
+      >
         <Text style={styles.upgradeText}>Unlock</Text>
       </Pressable>
     </View>

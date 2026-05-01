@@ -2,6 +2,11 @@ import { create } from 'zustand';
 import { useAuthStore } from './useAuthStore';
 import { SUBSCRIPTION_PLANS, PREMIUM_PRICE_MONTHLY, PREMIUM_PRICE_YEARLY } from '@unspent/shared/constants';
 
+type CheckoutSessionResponse = {
+  error?: string;
+  url?: string;
+};
+
 export interface Subscription {
   id: string;
   status: 'active' | 'canceled' | 'past_due' | 'trialing';
@@ -90,7 +95,7 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
         }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as CheckoutSessionResponse;
 
       if (data.error) {
         return { error: new Error(data.error) };

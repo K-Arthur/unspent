@@ -90,7 +90,10 @@ export const useCourtStore = create<CourtState>((set, get) => ({
           if (!voteCounts[v.wishlist_item_id]) {
             voteCounts[v.wishlist_item_id] = { buy: 0, pass: 0, dupe: 0 };
           }
-          voteCounts[v.wishlist_item_id][v.vote_type as 'buy' | 'pass' | 'dupe']++;
+          const itemVoteCounts = voteCounts[v.wishlist_item_id];
+          if (itemVoteCounts) {
+            itemVoteCounts[v.vote_type as 'buy' | 'pass' | 'dupe']++;
+          }
         });
       }
 
@@ -156,20 +159,20 @@ export const useCourtStore = create<CourtState>((set, get) => ({
         if (error) throw error;
       }
 
-      // Update local state immediately
+      // Update local state immediately, adjusting old and new vote counts
       set((state) => ({
-        courtItems: state.courtItems.map((item) =>
-          item.id === itemId
-            ? {
-                ...item,
-                userVote: voteType,
-                voteCounts: {
-                  ...item.voteCounts,
-                  [voteType]: item.voteCounts[voteType] + 1,
-                },
-              }
-            : item
-        ),
+        courtItems: state.courtItems.map((item) => {
+          if (item.id !== itemId) return item;
+          const prevVote = item.userVote;
+          const newCounts = { ...item.voteCounts };
+          if (prevVote && prevVote !== voteType) {
+            newCounts[prevVote] = Math.max(0, newCounts[prevVote] - 1);
+          }
+          if (!prevVote || prevVote !== voteType) {
+            newCounts[voteType] = newCounts[voteType] + 1;
+          }
+          return { ...item, userVote: voteType, voteCounts: newCounts };
+        }),
       }));
 
       return { error: null };

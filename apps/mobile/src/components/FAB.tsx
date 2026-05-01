@@ -8,7 +8,13 @@ interface FABProps {
 
 export function FAB({ onPress, icon = '+' }: FABProps) {
   return (
-    <Pressable style={styles.fab} onPress={onPress}>
+    <Pressable
+      style={styles.fab}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel="Add new item"
+      accessibilityHint="Opens form to add a new wish list item"
+    >
       <Text style={styles.icon}>{icon}</Text>
     </Pressable>
   );

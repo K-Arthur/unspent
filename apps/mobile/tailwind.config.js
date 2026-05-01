@@ -22,7 +22,7 @@ module.exports = {
     './app/**/*.{js,jsx,ts,tsx}',
     './src/**/*.{js,jsx,ts,tsx}',
   ],
-  presets: ['nativewind/babel'],
+  presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {

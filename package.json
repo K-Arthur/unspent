@@ -2,9 +2,17 @@
   "name": "unspent",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "dev:web": "cd apps/web && npm run dev",
-    "build:web": "cd apps/web && npm run build"
+    "dev:web": "pnpm --filter @unspent/web dev",
+    "dev:mobile": "pnpm --filter @unspent/mobile dev",
+    "build:web": "pnpm --filter @unspent/web build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "pnpm -r --if-present lint",
+    "supabase:start": "supabase start",
+    "supabase:db:push": "supabase db push",
+    "supabase:functions": "supabase functions serve",
+    "supabase:lint": "supabase db lint"
   },
   "engines": {
     "node": ">=18.0.0"

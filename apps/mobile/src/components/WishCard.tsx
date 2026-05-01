@@ -24,13 +24,19 @@ export function WishCard({ item, onPress }: WishCardProps) {
   };
 
   return (
-    <Pressable style={styles.card} onPress={onPress}>
+    <Pressable
+      style={styles.card}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${item.title}, $${(item.price / 100).toFixed(2)}, status: ${item.status.replace('_', ' ')}`}
+      accessibilityHint="Tap to view details"
+    >
       <View style={styles.content}>
         {item.imageUrl ? (
           <Image source={{ uri: item.imageUrl }} style={styles.image} />
         ) : (
           <View style={[styles.image, styles.placeholder]}>
-            <Text style={styles.placeholderText}>📦</Text>
+            <Text style={styles.placeholderText} accessibilityLabel="No image">📦</Text>
           </View>
         )}
         <View style={styles.details}>
@@ -46,6 +52,7 @@ export function WishCard({ item, onPress }: WishCardProps) {
         </View>
         <View
           style={[styles.statusBadge, { backgroundColor: statusColors[item.status] }]}
+          accessibilityLabel={`Status: ${item.status.replace('_', ' ')}`}
         >
           <Text style={styles.statusText}>{item.status.replace('_', ' ')}</Text>
         </View>

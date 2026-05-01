@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, Alert, ScrollView, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
 import { useWishlistStore } from '../../src/hooks/useWishlistStore';
 import { colors } from '../../src/constants/colors';
 
+type LinkPreviewResponse = {
+  title?: string;
+  description?: string;
+  image?: string;
+  price?: number;
+};
+
 export default function AddItemScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const { addItem, isLoading } = useWishlistStore();
   
   const [title, setTitle] = useState('');
@@ -17,9 +25,38 @@ export default function AddItemScreen() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [mode, setMode] = useState<'url' | 'screenshot'>('url');
 
+  // Warn before losing unsaved form data
+  const hasFormData = title.trim() || description.trim() || link.trim() || price.trim() || imageUrl;
+
+  useEffect(() => {
+    if (!hasFormData) return;
+
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+      Alert.alert(
+        'Discard item?',
+        'You have unsaved changes. Are you sure you want to close?',
+        [
+          { text: 'Keep Editing', style: 'cancel' },
+          {
+            text: 'Discard',
+            style: 'destructive',
+            onPress: () => navigation.dispatch(e.data.action),
+          },
+        ]
+      );
+    });
+    return unsubscribe;
+  }, [navigation, hasFormData]);
+
   const handlePasteUrl = async () => {
     try {
-      const clipboard = await navigator.clipboard.readText();
+      const clipboardApi = (globalThis as {
+        navigator?: {
+          clipboard?: { readText: () => Promise<string> };
+        };
+      }).navigator?.clipboard;
+      const clipboard = await clipboardApi?.readText();
       if (clipboard) {
         setLink(clipboard);
         await fetchLinkMetadata(clipboard);
@@ -45,7 +82,7 @@ export default function AddItemScreen() {
         body: JSON.stringify({ url }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as LinkPreviewResponse;
       
       if (data.title && !title) setTitle(data.title);
       if (data.description && !description) setDescription(data.description);
@@ -118,11 +155,6 @@ export default function AddItemScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Add to Wish Wall</Text>
-        <Text style={styles.subtitle}>Paste a link or add a screenshot</Text>
-      </View>
-
       <View style={styles.modeToggle}>
         <Pressable
           style={[styles.modeButton, mode === 'url' && styles.modeButtonActive]}
@@ -256,19 +288,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 40,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textSecondary,
   },
   modeToggle: {
     flexDirection: 'row',

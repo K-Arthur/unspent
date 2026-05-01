@@ -17,8 +17,12 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: 22 }}>🏠</Text>
+          tabBarAccessibilityLabel: 'Home tab',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+              <Text style={styles.icon}>{'🏠'}</Text>
+              {focused && <View style={styles.activeDot} />}
+            </View>
           ),
         }}
       />
@@ -26,8 +30,12 @@ export default function TabLayout() {
         name="court"
         options={{
           title: 'Court',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: 22 }}>⚖️</Text>
+          tabBarAccessibilityLabel: 'Court tab — vote on items',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+              <Text style={styles.icon}>{'⚖️'}</Text>
+              {focused && <View style={styles.activeDot} />}
+            </View>
           ),
         }}
       />
@@ -35,8 +43,12 @@ export default function TabLayout() {
         name="dupes"
         options={{
           title: 'Dupes',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: 22 }}>🔍</Text>
+          tabBarAccessibilityLabel: 'Dupes tab — find cheaper alternatives',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+              <Text style={styles.icon}>{'🔍'}</Text>
+              {focused && <View style={styles.activeDot} />}
+            </View>
           ),
         }}
       />
@@ -44,8 +56,12 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: 22 }}>👤</Text>
+          tabBarAccessibilityLabel: 'Profile tab',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+              <Text style={styles.icon}>{'👤'}</Text>
+              {focused && <View style={styles.activeDot} />}
+            </View>
           ),
         }}
       />
@@ -65,13 +81,26 @@ const styles = StyleSheet.create({
   tabBarLabel: {
     fontSize: 11,
     fontWeight: '500',
-    marginTop: 4,
+    marginTop: 2,
   },
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    borderRadius: 16,
+  },
+  iconContainerActive: {
+    backgroundColor: colors.accent,
   },
   icon: {
     fontSize: 22,
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.primaryDark,
+    marginTop: 2,
   },
 });

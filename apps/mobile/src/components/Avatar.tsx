@@ -27,6 +27,8 @@ export function Avatar({ uri, name, size = 40 }: AvatarProps) {
             borderRadius: size / 2,
           },
         ]}
+        accessibilityLabel={`Avatar for ${name}`}
+        accessibilityRole="image"
       />
     );
   }
@@ -41,6 +43,8 @@ export function Avatar({ uri, name, size = 40 }: AvatarProps) {
           borderRadius: size / 2,
         },
       ]}
+      accessibilityLabel={`Avatar for ${name}`}
+      accessibilityRole="image"
     >
       <Text style={[styles.initialsText, { fontSize: size * 0.4 }]}>{initials}</Text>
     </View>

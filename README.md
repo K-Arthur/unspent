@@ -13,12 +13,12 @@ Turn impulse-buy regret into a daily, gamified habit. Women paste items they wan
 ├── apps/
 │   ├── mobile/        # Expo (React Native) - iOS & Android (TestFlight)
 │   │   ├── app/       # Expo Router (file-based navigation)
-│   │   ├── src/       # Components, hooks, utilities
-│   │   └── supabase/  # Database migrations + Edge Functions
+│   │   └── src/       # Components, hooks, utilities
 │   └── web/          # Next.js 14+ (Vercel) - Landing + share cards
 │       └── src/       # Components, pages, OG images
-└── packages/
-    └── shared/       # TypeScript types, Zod schemas, constants
+├── packages/
+│   └── shared/       # TypeScript types, Zod schemas, constants
+└── supabase/         # Database migrations + Edge Functions
 ```
 
 ---
@@ -113,17 +113,16 @@ pnpm dev:android # Android emulator
 
 ### Supabase (Edge Functions)
 ```bash
-cd apps/mobile
-supabase start          # Local Supabase
-supabase db:push       # Push migrations
-supabase functions:serve # Local edge functions
+pnpm supabase:start     # Local Supabase
+pnpm supabase:db:push   # Push migrations
+pnpm supabase:functions # Local edge functions
 ```
 
 ---
 
 ## Database Schema
 
-Run the migration in `apps/mobile/supabase/migrations/001_initial_schema.sql`:
+Run the migration in `supabase/migrations/001_initial_schema.sql`:
 
 - **profiles** - User profiles (extends auth.users)
 - **wishlist_items** - Wish list items with status
@@ -151,7 +150,7 @@ vercel --prod
 ```
 
 **Vercel Settings:**
-- Build Command: `pnpm build`
+- Build Command: `pnpm --filter @unspent/web build`
 - Install Command: `pnpm install`
 - Output Directory: `apps/web/.next`
 - Node.js Version: 22.x

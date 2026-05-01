@@ -1,4 +1,4 @@
-# dependencies (keep pnpm-lock.yaml locally only)
+# dependencies
 node_modules/
 
 # build outputs
@@ -6,6 +6,7 @@ apps/web/.next/
 apps/web/out/
 apps/mobile/dist/
 apps/mobile/.expo/
+*.tsbuildinfo
 
 # env files
 .env
@@ -31,13 +32,10 @@ Thumbs.db
 
 # Supabase
 .supabase/admin-key
+supabase/supabase/
 
 # Vercel
 .vercel
 
 # Playwright test artifacts
 .playwright-mcp
-
-# pnpm workspace (keep locally, not in git for Vercel compatibility)
-pnpm-lock.yaml
-pnpm-workspace.yaml

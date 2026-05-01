@@ -24,7 +24,13 @@ export function DupeCard({ dupe, onPress }: DupeCardProps) {
   };
 
   return (
-    <Pressable style={styles.card} onPress={handlePress}>
+    <Pressable
+      style={styles.card}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={`${dupe.name}, $${(dupe.suggestedPrice / 100).toFixed(2)}, ${Math.round(dupe.confidence * 100)}% match`}
+      accessibilityHint="Opens product link"
+    >
       <View style={styles.content}>
         <View style={styles.imagePlaceholder}>
           <Text style={styles.placeholderText}>🔗</Text>
@@ -34,12 +40,13 @@ export function DupeCard({ dupe, onPress }: DupeCardProps) {
             {dupe.name}
           </Text>
           <Text style={styles.price}>${(dupe.suggestedPrice / 100).toFixed(2)}</Text>
-          <View style={styles.confidence}>
+          <View style={styles.confidence} accessibilityLabel={`${Math.round(dupe.confidence * 100)}% match`}>
             <View
               style={[
                 styles.confidenceBar,
                 { width: `${dupe.confidence * 100}%` },
               ]}
+              accessibilityLabel="Confidence level"
             />
             <Text style={styles.confidenceText}>
               {Math.round(dupe.confidence * 100)}% match

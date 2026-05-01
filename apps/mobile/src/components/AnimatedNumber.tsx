@@ -10,7 +10,12 @@ interface AnimatedNumberProps {
 
 export function AnimatedNumber({ value, prefix = '', suffix = '', style }: AnimatedNumberProps) {
   return (
-    <Text style={[styles.text, style]}>
+    <Text
+      style={[styles.text, style]}
+      accessibilityLabel={`${prefix}${value.toLocaleString()}${suffix}`}
+      accessibilityRole="text"
+      accessibilityLiveRegion="polite"
+    >
       {prefix}{value.toLocaleString()}{suffix}
     </Text>
   );

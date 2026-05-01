@@ -22,7 +22,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-surface border-t border-accent py-12 px-4">
+    <footer aria-label="Site footer" className="bg-surface border-t border-accent py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>

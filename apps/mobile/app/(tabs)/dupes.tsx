@@ -29,9 +29,10 @@ export default function DupesScreen() {
     router.push('/upgrade');
   };
 
-  const handleDupePress = (dupe: { id: string; link: string }) => {
-    if (dupe.link) {
-      Linking.openURL(dupe.link);
+  const handleDupePress = (dupe: { id: string; link: string | null; affiliateLink?: string | null }) => {
+    const url = dupe.affiliateLink ?? dupe.link;
+    if (url) {
+      Linking.openURL(url);
     }
   };
 

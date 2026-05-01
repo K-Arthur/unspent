@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, FlatList, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useFriendsStore } from '../../src/hooks/useFriendsStore';
-import { useAuthStore } from '../../src/hooks/useAuthStore';
-import { colors } from '../../src/constants/colors';
-import { Avatar } from '../../src/components/Avatar';
+import { useFriendsStore } from '../src/hooks/useFriendsStore';
+import { useAuthStore } from '../src/hooks/useAuthStore';
+import { colors } from '../src/constants/colors';
+import { Avatar } from '../src/components/Avatar';
 
 export default function FriendsScreen() {
   const router = useRouter();

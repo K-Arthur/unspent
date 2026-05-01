@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3000'),
   title: {
     default: 'Unspent | Turn Wishlist Regret into Savings',
     template: '%s | Unspent',
@@ -33,9 +34,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <a href="#main-content" className="sr-only focus:not-sr-only">
-          Skip to main content
-        </a>
         {children}
       </body>
     </html>

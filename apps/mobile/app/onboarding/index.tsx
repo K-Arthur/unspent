@@ -69,6 +69,14 @@ export default function OnboardingScreen() {
   if (step === 'age-gate') {
     return (
       <View style={styles.container}>
+        <Pressable
+          style={styles.backInlineButton}
+          onPress={() => setStep('slides')}
+          accessibilityRole="button"
+          accessibilityLabel="Go back to intro slides"
+        >
+          <Text style={styles.backInlineText}>← Back</Text>
+        </Pressable>
         <Text style={styles.title}>When were you born?</Text>
         <Text style={styles.subtitle}>We need this to personalize your experience</Text>
         
@@ -100,6 +108,14 @@ export default function OnboardingScreen() {
   if (step === 'signup') {
     return (
       <View style={styles.container}>
+        <Pressable
+          style={styles.backInlineButton}
+          onPress={() => setStep('age-gate')}
+          accessibilityRole="button"
+          accessibilityLabel="Go back to age verification"
+        >
+          <Text style={styles.backInlineText}>← Back</Text>
+        </Pressable>
         <Text style={styles.title}>Create Your Account</Text>
         
         <View style={styles.socialButtons}>
@@ -139,6 +155,10 @@ export default function OnboardingScreen() {
           <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
 
+        <Pressable style={styles.skipButton} onPress={() => router.replace('/(tabs)')}>
+          <Text style={styles.skipText}>Skip for now</Text>
+        </Pressable>
+
         <Text style={styles.terms}>
           By signing up, you agree to our{' '}
           <Text style={styles.link}>Terms</Text> and{' '}
@@ -148,8 +168,20 @@ export default function OnboardingScreen() {
     );
   }
 
+  const activeSlide = slides[currentSlide] ?? slides[0]!;
+
   return (
     <View style={styles.container}>
+      {currentSlide > 0 && (
+        <Pressable
+          style={styles.backInlineButton}
+          onPress={() => setCurrentSlide(currentSlide - 1)}
+          accessibilityRole="button"
+          accessibilityLabel="Go back to previous slide"
+        >
+          <Text style={styles.backInlineText}>← Back</Text>
+        </Pressable>
+      )}
       <View style={styles.progress}>
         {slides.map((_, i) => (
           <View
@@ -163,10 +195,10 @@ export default function OnboardingScreen() {
       </View>
 
       <View style={styles.slide}>
-        <Text style={styles.icon}>{slides[currentSlide].icon}</Text>
-        <Text style={styles.slideTitle}>{slides[currentSlide].title}</Text>
+        <Text style={styles.icon}>{activeSlide.icon}</Text>
+        <Text style={styles.slideTitle}>{activeSlide.title}</Text>
         <Text style={styles.slideDescription}>
-          {slides[currentSlide].description}
+          {activeSlide.description}
         </Text>
       </View>
 
@@ -323,5 +355,17 @@ const styles = StyleSheet.create({
   },
   link: {
     color: colors.primary,
+  },
+  backInlineButton: {
+    position: 'absolute',
+    top: 60,
+    left: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  backInlineText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    fontWeight: '500',
   },
 });

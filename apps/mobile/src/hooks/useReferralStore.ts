@@ -27,6 +27,10 @@ export interface ShareCardData {
   streak: number;
 }
 
+type ShareCardResponse = {
+  imageUrl?: string;
+};
+
 function generateReferralCode(username: string): string {
   const timestamp = Date.now().toString(36);
   const hash = username
@@ -64,7 +68,7 @@ export const useReferralStore = create<ReferralState>((set, get) => ({
     }
 
     // Generate new referral code
-    const referralCode = generateReferralCode(profile.username);
+    const referralCode = generateReferralCode(profile.username ?? 'user');
 
     const { error } = await supabase
       .from('profiles')
@@ -99,8 +103,8 @@ export const useReferralStore = create<ReferralState>((set, get) => ({
       throw new Error('Failed to generate share card');
     }
 
-    const data = await response.json();
-    return data.imageUrl;
+    const data = (await response.json()) as ShareCardResponse;
+    return data.imageUrl ?? '';
   },
 
   shareToSocial: async (platform, cardData) => {

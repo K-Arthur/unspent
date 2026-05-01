@@ -34,12 +34,17 @@ export function Navbar() {
           className="md:hidden w-11 h-11 flex items-center justify-center rounded-lg link-focus"
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={mobileOpen}
+          aria-controls="mobile-nav"
         >
           <span className="text-2xl">{mobileOpen ? '✕' : '☰'}</span>
         </button>
       </div>
-      {mobileOpen && (
-        <nav aria-label="Mobile navigation" className="md:hidden border-t border-accent bg-surface px-4 py-4 flex flex-col gap-4">
+      <nav
+        id="mobile-nav"
+        aria-label="Mobile navigation"
+        className="md:hidden border-t border-accent bg-surface px-4 py-4 flex flex-col gap-4"
+        style={{ display: mobileOpen ? 'flex' : 'none' }}
+      >
           <Link href="#features" className="text-text-secondary hover:text-text link-focus py-2 transition-colors" onClick={() => setMobileOpen(false)}>
             Features
           </Link>
@@ -50,7 +55,6 @@ export function Navbar() {
             Download
           </Link>
         </nav>
-      )}
     </header>
   );
 }
