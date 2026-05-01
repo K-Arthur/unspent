@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-text font-semibold py-3 px-6 rounded-xl active:opacity-80 transition-opacity;
+  }
+  
+  .btn-secondary {
+    @apply bg-accent text-text font-semibold py-3 px-6 rounded-xl active:opacity-80 transition-opacity;
+  }
+  
+  .card {
+    @apply bg-surface rounded-2xl p-6 shadow-sm;
+  }
+}

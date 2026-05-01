@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "unspent",
+  "scope": "kevin-arthurs-projects-a53ebb68",
+  "projects": {
+    "web": {
+      "root": "apps/web",
+      "buildCommand": "pnpm build",
+      "devCommand": "pnpm dev",
+      "installCommand": "pnpm install",
+      "outputDirectory": "apps/web/.next"
+    }
+  }
+}
