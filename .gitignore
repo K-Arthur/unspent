@@ -35,6 +35,9 @@ Thumbs.db
 # Vercel
 .vercel
 
+# Playwright test artifacts
+.playwright-mcp
+
 # pnpm workspace (keep locally, not in git for Vercel compatibility)
 pnpm-lock.yaml
 pnpm-workspace.yaml
