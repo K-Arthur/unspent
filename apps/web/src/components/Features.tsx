@@ -28,7 +28,7 @@ export function Features() {
         <h2 className="text-4xl font-bold text-center text-text mb-4">
           How Unspent Works
         </h2>
-        <p className="text-xl text-text-secondary text-center mb-16 max-w-2xl mx-auto">
+        <p className="text-xl text-text-secondary text-center mb-16 max-w-3xl mx-auto">
           A simple habit that transforms your relationship with shopping
         </p>
         

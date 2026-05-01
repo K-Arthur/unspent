@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.error,
+    backgroundColor: '#C62828',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     flexDirection: 'row',
-    backgroundColor: colors.pass + '20',
+    backgroundColor: '#FFF3E0',
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,

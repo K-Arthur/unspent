@@ -17,9 +17,9 @@ interface WishCardProps {
 
 export function WishCard({ item, onPress }: WishCardProps) {
   const statusColors: Record<string, string> = {
-    cooling_off: colors.pass,
+    cooling_off: '#E65100',
     expired: colors.textSecondary,
-    purchased: colors.buy,
+    purchased: '#2E7D32',
     pending: colors.textSecondary,
   };
 
@@ -59,12 +59,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 12,
-    marginBottom: 12,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
   },
   content: {
     flexDirection: 'row',
@@ -107,9 +107,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   statusText: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
     color: colors.surface,
     textTransform: 'capitalize',
+    letterSpacing: 0.5,
   },
 });

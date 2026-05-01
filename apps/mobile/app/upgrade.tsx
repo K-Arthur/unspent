@@ -211,8 +211,8 @@ const styles = StyleSheet.create({
   savingsBadge: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.success,
-    backgroundColor: colors.success + '20',
+    color: '#2E7D32',
+    backgroundColor: '#E8F5E9',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   featureCheck: {
     fontSize: 18,
-    color: colors.success,
+    color: '#2E7D32',
     marginRight: 12,
   },
   featureText: {

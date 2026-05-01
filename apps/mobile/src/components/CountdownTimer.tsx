@@ -97,13 +97,13 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   timeLabel: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textSecondary,
     marginLeft: 2,
   },
   expiredText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.success,
+    color: '#2E7D32',
   },
 });

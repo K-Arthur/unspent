@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   signOutButtonText: {
     fontSize: 16,
-    color: colors.error,
+    color: '#C62828',
   },
   promptContainer: {
     flex: 1,

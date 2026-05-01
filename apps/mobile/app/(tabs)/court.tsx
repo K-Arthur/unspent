@@ -67,15 +67,13 @@ export default function CourtScreen() {
 
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.buy }]} />
-            <Text style={styles.legendText}>Buy</Text>
+            <View style={[styles.legendDot, { backgroundColor: '#2E7D32' }]} />
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.pass }]} />
-            <Text style={styles.legendText}>Pass</Text>
+            <View style={[styles.legendDot, { backgroundColor: '#E65100' }]} />
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: colors.dupe }]} />
+            <View style={[styles.legendDot, { backgroundColor: '#0D47A1' }]} />
             <Text style={styles.legendText}>Dupe it</Text>
           </View>
         </View>

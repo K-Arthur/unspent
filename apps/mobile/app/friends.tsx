@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   acceptButton: {
-    backgroundColor: colors.success,
+    backgroundColor: '#2E7D32',
   },
   acceptText: {
     fontSize: 14,

@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   initialsText: {
-    color: colors.text,
-    fontWeight: '600',
+    color: '#3D1C1F',
+    fontWeight: '700',
   },
 });

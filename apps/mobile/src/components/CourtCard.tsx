@@ -48,15 +48,15 @@ export function CourtCard({ item, onPress }: CourtCardProps) {
 
       <View style={styles.votes}>
         <View style={styles.voteCount}>
-          <View style={[styles.voteDot, { backgroundColor: colors.buy }]} />
+          <View style={[styles.voteDot, { backgroundColor: '#2E7D32' }]} />
           <Text style={styles.voteCountText}>{item.voteCounts.buy}</Text>
         </View>
         <View style={styles.voteCount}>
-          <View style={[styles.voteDot, { backgroundColor: colors.pass }]} />
+          <View style={[styles.voteDot, { backgroundColor: '#E65100' }]} />
           <Text style={styles.voteCountText}>{item.voteCounts.pass}</Text>
         </View>
         <View style={styles.voteCount}>
-          <View style={[styles.voteDot, { backgroundColor: colors.dupe }]} />
+          <View style={[styles.voteDot, { backgroundColor: '#0D47A1' }]} />
           <Text style={styles.voteCountText}>{item.voteCounts.dupe}</Text>
         </View>
       </View>

@@ -6,18 +6,38 @@
   body {
     @apply bg-background text-text;
   }
+  
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-text font-semibold py-3 px-6 rounded-xl active:opacity-80 transition-opacity;
+    @apply bg-primary text-text font-semibold py-3 px-8 rounded-xl
+           hover:opacity-90 focus-visible:ring-2 focus-visible:ring-text
+           focus-visible:ring-offset-2 focus-visible:outline-none
+           motion-safe:transition-opacity;
   }
   
   .btn-secondary {
-    @apply bg-accent text-text font-semibold py-3 px-6 rounded-xl active:opacity-80 transition-opacity;
+    @apply bg-accent text-text font-semibold py-3 px-8 rounded-xl
+           hover:opacity-90 focus-visible:ring-2 focus-visible:ring-text
+           focus-visible:ring-offset-2 focus-visible:outline-none
+           motion-safe:transition-opacity;
+  }
+  
+  .link-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-primary focus-visible:ring-offset-2 rounded;
   }
   
   .card {
-    @apply bg-surface rounded-2xl p-6 shadow-sm;
+    @apply bg-surface rounded-2xl p-6 shadow-md;
   }
 }

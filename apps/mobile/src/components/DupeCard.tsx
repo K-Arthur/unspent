@@ -57,12 +57,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
   },
   content: {
     flexDirection: 'row',
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.success,
+    color: '#2E7D32',
     marginVertical: 4,
   },
   confidence: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   confidenceBar: {
     height: 4,
-    backgroundColor: colors.success,
+    backgroundColor: '#2E7D32',
     borderRadius: 2,
     marginRight: 8,
   },

@@ -213,17 +213,17 @@ export default function CourtItemScreen() {
         <View style={styles.voteTally}>
           <View style={styles.tallyRow}>
             <View style={styles.tallyItem}>
-              <View style={[styles.tallyDot, { backgroundColor: colors.buy }]} />
+              <View style={[styles.tallyDot, { backgroundColor: '#2E7D32' }]} />
               <Text style={styles.tallyLabel}>Buy</Text>
               <Text style={styles.tallyCount}>{item.voteCounts.buy}</Text>
             </View>
             <View style={styles.tallyItem}>
-              <View style={[styles.tallyDot, { backgroundColor: colors.pass }]} />
+              <View style={[styles.tallyDot, { backgroundColor: '#E65100' }]} />
               <Text style={styles.tallyLabel}>Pass</Text>
               <Text style={styles.tallyCount}>{item.voteCounts.pass}</Text>
             </View>
             <View style={styles.tallyItem}>
-              <View style={[styles.tallyDot, { backgroundColor: colors.dupe }]} />
+              <View style={[styles.tallyDot, { backgroundColor: '#0D47A1' }]} />
               <Text style={styles.tallyLabel}>Dupe</Text>
               <Text style={styles.tallyCount}>{item.voteCounts.dupe}</Text>
             </View>

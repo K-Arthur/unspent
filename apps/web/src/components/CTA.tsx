@@ -10,9 +10,10 @@ export function CTA() {
         <p className="text-xl text-text-secondary mb-10">
           Join thousands of women making smarter purchasing decisions together
         </p>
-        <Link 
-          href="https://apps.apple.com" 
-          className="btn-primary text-lg px-10 inline-block"
+        <Link
+          href="https://apps.apple.com"
+          className="btn-primary text-lg inline-block"
+          rel="noopener"
         >
           Get Started Free
         </Link>
