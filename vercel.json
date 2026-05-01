@@ -1,11 +1,6 @@
 {
   "version": 2,
-  "name": "unspent",
   "scope": "kevin-arthurs-projects-a53ebb68",
-  "link": {
-    "type": "github",
-    "repo": "K-Arthur/unspent"
-  },
   "projects": {
     "web": {
       "root": "apps/web",
