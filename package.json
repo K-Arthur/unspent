@@ -2,7 +2,7 @@
   "name": "unspent",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.33.2",
   "scripts": {
     "dev:web": "pnpm --filter @unspent/web dev",
     "dev:mobile": "pnpm --filter @unspent/mobile dev",
@@ -20,5 +20,8 @@
   "devDependencies": {
     "@typescript-eslint/parser": "^8.59.1",
     "eslint": "^8.57.1"
+  },
+  "dependencies": {
+    "pnpm": "10.33.2"
   }
 }
