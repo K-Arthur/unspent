@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
+import React from 'react';
 import { formatCurrency } from '@unspent/shared/utils';
 
 type SavingsTallyPageProps = {
-  params: {
+  params: Promise<{
     username: string;
-  };
+  }>;
 };
 
-export function generateMetadata({ params }: SavingsTallyPageProps): Metadata {
-  const username = decodeURIComponent(params.username);
+export async function generateMetadata({ params }: SavingsTallyPageProps): Promise<Metadata> {
+  const { username: rawUsername } = await params;
+  const username = decodeURIComponent(rawUsername);
 
   return {
     title: `@${username}'s Savings Tally`,
@@ -22,7 +24,8 @@ export function generateMetadata({ params }: SavingsTallyPageProps): Metadata {
 }
 
 export default function SavingsTallyPage({ params }: SavingsTallyPageProps) {
-  const username = decodeURIComponent(params.username);
+  const { username: rawUsername } = React.use(params);
+  const username = decodeURIComponent(rawUsername);
   const placeholderSavedAmount = 0;
 
   return (
