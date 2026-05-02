@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, Image, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { colors } from '../constants/colors';
 
 interface DupeCardProps {
@@ -15,18 +15,10 @@ interface DupeCardProps {
 }
 
 export function DupeCard({ dupe, onPress }: DupeCardProps) {
-  const handlePress = () => {
-    if (dupe.affiliateLink) {
-      Linking.openURL(dupe.affiliateLink);
-    } else if (dupe.link) {
-      Linking.openURL(dupe.link);
-    }
-  };
-
   return (
     <Pressable
       style={styles.card}
-      onPress={handlePress}
+      onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${dupe.name}, $${(dupe.suggestedPrice / 100).toFixed(2)}, ${Math.round(dupe.confidence * 100)}% match`}
       accessibilityHint="Opens product link"

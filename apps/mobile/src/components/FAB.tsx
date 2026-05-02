@@ -1,4 +1,4 @@
-import { StyleSheet, Pressable, Text, View } from 'react-native';
+import { StyleSheet, Pressable, Text } from 'react-native';
 import { colors } from '../constants/colors';
 
 interface FABProps {

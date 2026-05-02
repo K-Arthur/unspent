@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, Text, Pressable } from 'react-native';
+import { View, Image, StyleSheet, Text } from 'react-native';
 import { colors } from '../constants/colors';
 
 interface AvatarProps {

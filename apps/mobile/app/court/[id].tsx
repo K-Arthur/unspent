@@ -20,7 +20,7 @@ const REASON_OPTIONS = [
 export default function CourtItemScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { courtItems, voteOnItem, isLoading } = useCourtStore();
+  const { courtItems, voteOnItem } = useCourtStore();
   const { isAuthenticated } = useAuthStore();
   
   const [showReasons, setShowReasons] = useState(false);

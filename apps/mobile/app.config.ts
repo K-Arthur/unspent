@@ -8,6 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: 'Unspent',
   slug: 'unspent',
   version: '1.0.0',
+  platforms: ['ios', 'android'],
   orientation: 'portrait',
   icon: './assets/icon.png',
   scheme: appScheme,

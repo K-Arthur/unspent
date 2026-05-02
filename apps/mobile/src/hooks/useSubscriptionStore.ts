@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { useAuthStore } from './useAuthStore';
-import { SUBSCRIPTION_PLANS, PREMIUM_PRICE_MONTHLY, PREMIUM_PRICE_YEARLY } from '@unspent/shared/constants';
 
 type CheckoutSessionResponse = {
   error?: string;
@@ -74,31 +73,39 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
   createCheckoutSession: async (plan) => {
     set({ isLoading: true, error: null });
 
+    const supabase = useAuthStore.getState().supabase;
     const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (!supabaseUrl || !supabaseKey) {
+    if (!supabase || !supabaseUrl || !supabaseKey) {
+      set({ isLoading: false });
       return { error: new Error('Server not configured') };
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        set({ isLoading: false });
+        return { error: new Error('Please sign in before subscribing') };
+      }
+
       const response = await fetch(`${supabaseUrl}/functions/v1/create-checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': supabaseKey,
         },
         body: JSON.stringify({
-          priceId: plan === 'monthly' 
-            ? SUBSCRIPTION_PLANS.monthly.id 
-            : SUBSCRIPTION_PLANS.yearly.id,
+          plan,
         }),
       });
 
       const data = (await response.json()) as CheckoutSessionResponse;
 
-      if (data.error) {
-        return { error: new Error(data.error) };
+      if (!response.ok || data.error || !data.url) {
+        set({ isLoading: false });
+        return { error: new Error(data.error ?? 'Failed to create checkout session') };
       }
 
       set({ isLoading: false });

@@ -90,12 +90,14 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
     
     const supabase = useAuthStore.getState().supabase;
     if (!supabase) {
+      set({ isLoading: false });
       return { error: new Error('Not authenticated'), itemId: undefined };
     }
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
+        set({ isLoading: false });
         return { error: new Error('Not authenticated'), itemId: undefined };
       }
 
@@ -140,7 +142,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
       return { error: null, itemId: data.id };
     } catch (error) {
-      set({ isLoading: false });
+      set({ error: error as Error, isLoading: false });
       return { error: error as Error, itemId: undefined };
     }
   },

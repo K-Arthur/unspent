@@ -3,8 +3,28 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
 };
+
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(
+    JSON.stringify(body),
+    { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  );
+}
+
+function authorizeJob(req: Request): { ok: true } | { ok: false; status: number; error: string } {
+  const secret = Deno.env.get('PROCESS_VESTED_SECRET');
+  if (!secret) {
+    return { ok: false, status: 500, error: 'Job secret not configured' };
+  }
+
+  if (req.headers.get('x-cron-secret') !== secret) {
+    return { ok: false, status: 401, error: 'Unauthorized' };
+  }
+
+  return { ok: true };
+}
 
 interface VoteResult {
   buy: number;
@@ -26,7 +46,7 @@ async function processVoteOutcome(
     .single();
 
   if (itemError || !item) {
-    console.log('Item not found:', itemError);
+    console.error('Item not found:', itemError);
     return null;
   }
 
@@ -37,7 +57,7 @@ async function processVoteOutcome(
     .eq('wishlist_item_id', itemId);
 
   if (votesError) {
-    console.log('Votes error:', votesError);
+    console.error('Votes error:', votesError);
     return null;
   }
 
@@ -84,15 +104,17 @@ async function processVoteOutcome(
     .eq('id', itemId);
 
   if (updateError) {
-    console.log('Update error:', updateError);
+    console.error('Update error:', updateError);
   }
 
   // If pass or dupe, record savings
   if ((winner === 'pass' || winner === 'dupe') && item.price > 0) {
-    await supabase.from('savings_tallies').insert({
+    await supabase.from('savings_tallies').upsert({
       user_id: item.user_id,
       item_id: itemId,
       amount_saved: item.price,
+    }, {
+      onConflict: 'item_id',
     });
 
     // Update user's total saved
@@ -131,15 +153,21 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
+  if (!['GET', 'POST'].includes(req.method)) {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  const authorization = authorizeJob(req);
+  if (!authorization.ok) {
+    return jsonResponse({ error: authorization.error }, authorization.status);
+  }
+
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_SERVICE_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
-      return new Response(
-        JSON.stringify({ error: 'Server misconfiguration' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'Server misconfiguration' }, 500);
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -153,10 +181,7 @@ serve(async (req) => {
       .limit(10);
 
     if (error) {
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: error.message }, 500);
     }
 
     const results = [];
@@ -167,14 +192,9 @@ serve(async (req) => {
       }
     }
 
-    return new Response(
-      JSON.stringify({ processed: results.length, results }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return jsonResponse({ processed: results.length, results });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    console.error('Process vested error:', error);
+    return jsonResponse({ error: 'Internal server error' }, 500);
   }
 });

@@ -28,7 +28,7 @@ export function Testimonials() {
           {testimonials.map((testimonial) => (
             <article key={testimonial.name} className="card">
               <blockquote className="text-lg text-text mb-6">
-                <p>"{testimonial.quote}"</p>
+                <p>&ldquo;{testimonial.quote}&rdquo;</p>
               </blockquote>
               <div className="border-t border-accent pt-4">
                 <p className="font-semibold text-text">{testimonial.name}</p>

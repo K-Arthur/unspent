@@ -16,5 +16,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.59.1",
+    "eslint": "^8.57.1"
   }
 }

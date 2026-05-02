@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Pressable, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../src/hooks/useAuthStore';
 import { useWishlistStore } from '../../src/hooks/useWishlistStore';
 import { colors } from '../../src/constants/colors';
-import { CountdownTimer } from '../../src/components/CountdownTimer';
 import { WishCard } from '../../src/components/WishCard';
 import { AnimatedNumber } from '../../src/components/AnimatedNumber';
 import { FAB } from '../../src/components/FAB';
@@ -12,7 +11,7 @@ import { FAB } from '../../src/components/FAB';
 export default function HomeScreen() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
-  const { items, isLoading: itemsLoading, refreshItems, fetchItems } = useWishlistStore();
+  const { items, refreshItems, fetchItems } = useWishlistStore();
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {

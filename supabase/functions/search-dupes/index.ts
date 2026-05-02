@@ -22,6 +22,26 @@ interface DupeResult {
 const serperApiKey = Deno.env.get('SERPER_API_KEY');
 const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
 
+function jsonResponse(body: Record<string, unknown>, status = 200) {
+  return new Response(
+    JSON.stringify(body),
+    { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  );
+}
+
+async function getAuthContext(
+  req: Request,
+  supabase: ReturnType<typeof createClient>,
+  serviceKey: string
+): Promise<{ userId: string | null; isInternal: boolean }> {
+  const token = req.headers.get('Authorization')?.replace('Bearer ', '');
+  if (!token) return { userId: null, isInternal: false };
+  if (token === serviceKey) return { userId: null, isInternal: true };
+
+  const { data: { user } } = await supabase.auth.getUser(token);
+  return { userId: user?.id ?? null, isInternal: false };
+}
+
 async function searchSerper(query: string): Promise<SerperResult[]> {
   if (!serperApiKey) {
     console.log('No Serper key, returning mock');
@@ -170,40 +190,44 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
+  if (req.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
   try {
     const { itemId } = await req.json();
 
     if (!itemId) {
-      return new Response(
-        JSON.stringify({ error: 'itemId is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'itemId is required' }, 400);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SUPABASE_SERVICE_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
-      return new Response(
-        JSON.stringify({ error: 'Server misconfiguration' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'Server misconfiguration' }, 500);
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
+    const auth = await getAuthContext(req, supabase, supabaseKey);
+
+    if (!auth.isInternal && !auth.userId) {
+      return jsonResponse({ error: 'Unauthorized' }, 401);
+    }
 
     // Get item details
     const { data: item, error } = await supabase
       .from('wishlist_items')
-      .select('title, price')
+      .select('title, price, user_id')
       .eq('id', itemId)
       .single();
 
     if (error || !item) {
-      return new Response(
-        JSON.stringify({ error: 'Item not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'Item not found' }, 404);
+    }
+
+    if (!auth.isInternal && item.user_id !== auth.userId) {
+      return jsonResponse({ error: 'Forbidden' }, 403);
     }
 
     // Search for dupes
@@ -242,14 +266,9 @@ serve(async (req) => {
       saved: savedDupes.length,
     };
 
-    return new Response(
-      JSON.stringify(response),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return jsonResponse(response);
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: 'Failed to search dupes' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    console.error('Dupe search error:', error);
+    return jsonResponse({ error: 'Failed to search dupes' }, 500);
   }
 });

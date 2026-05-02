@@ -5,12 +5,11 @@ import { useAuthStore } from '../../src/hooks/useAuthStore';
 import { useCourtStore } from '../../src/hooks/useCourtStore';
 import { colors } from '../../src/constants/colors';
 import { CourtCard } from '../../src/components/CourtCard';
-import { VoteButton } from '../../src/components/VoteButton';
 
 export default function CourtScreen() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
-  const { courtItems, isLoading, refreshCourtItems, fetchCourtItems } = useCourtStore();
+  const { isAuthenticated } = useAuthStore();
+  const { courtItems, refreshCourtItems, fetchCourtItems } = useCourtStore();
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {

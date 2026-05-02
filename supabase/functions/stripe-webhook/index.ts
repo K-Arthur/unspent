@@ -32,6 +32,13 @@ serve(async (req) => {
 
     let event: Stripe.Event;
 
+    if (!signature) {
+      return new Response(
+        JSON.stringify({ error: 'Missing signature' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     try {
       event = stripe.webhooks.constructEvent(
         body,
@@ -69,12 +76,14 @@ serve(async (req) => {
           const periodEnd = new Date();
           periodEnd.setMonth(periodEnd.getMonth() + (plan === 'yearly' ? 12 : 1));
 
-          await supabase.from('subscriptions').insert({
+          await supabase.from('subscriptions').upsert({
             user_id: userId,
             stripe_subscription_id: subscriptionId,
             status: 'active',
             plan,
             current_period_end: periodEnd.toISOString(),
+          }, {
+            onConflict: 'stripe_subscription_id',
           });
 
           // Update profile premium status

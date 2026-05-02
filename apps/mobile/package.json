@@ -12,13 +12,14 @@
     "build:preview": "eas build --profile preview --platform ios",
     "build:production": "eas build --profile production --platform ios",
     "submit": "eas submit --latest",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "prebuild": "expo prebuild"
+    "native:prebuild": "expo prebuild"
   },
   "dependencies": {
     "@expo/metro-runtime": "^6.1.2",
     "@expo/vector-icons": "^15.1.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/native": "^7.1.8",
     "@supabase/supabase-js": "^2.39.0",
     "@unspent/shared": "workspace:*",

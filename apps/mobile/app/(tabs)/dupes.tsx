@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Image, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../src/hooks/useAuthStore';
 import { useDupeStore } from '../../src/hooks/useDupeStore';
@@ -9,8 +9,8 @@ import { LockedFeature } from '../../src/components/LockedFeature';
 
 export default function DupesScreen() {
   const router = useRouter();
-  const { user, isAuthenticated, isPremium } = useAuthStore();
-  const { dupes, isLoading, refreshDupes, fetchDupes } = useDupeStore();
+  const { isAuthenticated, isPremium } = useAuthStore();
+  const { dupes, refreshDupes, fetchDupes } = useDupeStore();
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {

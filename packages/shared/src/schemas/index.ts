@@ -1,6 +1,16 @@
 import { z } from 'zod';
 import { VOTE_THRESHOLD, COOLDOWN_HOURS } from '../constants';
 
+function calculateAgeFromDate(date: Date): number {
+  const now = new Date();
+  let age = now.getFullYear() - date.getFullYear();
+  const monthDiff = now.getMonth() - date.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < date.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 export const usernameSchema = z
   .string()
   .min(3, 'Username must be at least 3 characters')
@@ -15,9 +25,7 @@ export const birthDateSchema = z
   }, 'Invalid birth date')
   .refine((val) => {
     const date = new Date(val);
-    const now = new Date();
-    const age = now.getFullYear() - date.getFullYear();
-    return age >= 13;
+    return calculateAgeFromDate(date) >= 13;
   }, 'You must be at least 13 years old to use Unspent')
   .transform((val) => new Date(val));
 

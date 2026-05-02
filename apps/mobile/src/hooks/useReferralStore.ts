@@ -27,10 +27,6 @@ export interface ShareCardData {
   streak: number;
 }
 
-type ShareCardResponse = {
-  imageUrl?: string;
-};
-
 function generateReferralCode(username: string): string {
   const timestamp = Date.now().toString(36);
   const hash = username
@@ -83,18 +79,25 @@ export const useReferralStore = create<ReferralState>((set, get) => ({
   },
 
   generateShareCard: async (itemId) => {
+    const supabase = useAuthStore.getState().supabase;
     const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (!supabaseUrl || !supabaseKey) {
+    if (!supabase || !supabaseUrl || !supabaseKey) {
       throw new Error('Server not configured');
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      throw new Error('Please sign in before generating a share card');
     }
 
     const response = await fetch(`${supabaseUrl}/functions/v1/generate-share-card`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseKey}`,
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': supabaseKey,
       },
       body: JSON.stringify({ itemId }),
     });
@@ -103,8 +106,8 @@ export const useReferralStore = create<ReferralState>((set, get) => ({
       throw new Error('Failed to generate share card');
     }
 
-    const data = (await response.json()) as ShareCardResponse;
-    return data.imageUrl ?? '';
+    const svg = await response.text();
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
   },
 
   shareToSocial: async (platform, cardData) => {
@@ -113,6 +116,8 @@ export const useReferralStore = create<ReferralState>((set, get) => ({
     
     // In production, would use platform-specific sharing
     // For now, this is a placeholder
-    console.log(`Sharing to ${platform}:`, cardData);
+    if (__DEV__) {
+      console.info(`Sharing to ${platform}:`, cardData);
+    }
   },
 }));

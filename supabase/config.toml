@@ -57,3 +57,9 @@ secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
 enabled = true
 policy = "per_worker"
 inspector_port = 8083
+
+[functions.process-vested]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false

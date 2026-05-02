@@ -51,37 +51,37 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
         .from('friendships')
         .select(`
           *,
-          profiles!friendships_addressee_id_fkey (
+          requester:profiles!friendships_requester_id_fkey (
             username,
             full_name,
             avatar_url
           ),
-          profiles!friendships_requester_id_fkey (
+          addressee:profiles!friendships_addressee_id_fkey (
             username,
             full_name,
             avatar_url
           )
         `)
         .eq('status', 'accepted')
-        .eq('requester_id', user.id);
+        .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
 
       if (error) throw error;
 
-      const friendsList: Friend[] = (friendships || []).map((f) => ({
-        id: f.addressee_id === user.id ? f.requester_id : f.addressee_id,
-        userId: f.addressee_id === user.id ? f.requester_id : f.addressee_id,
-        username: f.addressee_id === user.id 
-          ? f.profiles?.username 
-          : f.profiles?.username,
-        fullName: f.addressee_id === user.id 
-          ? f.profiles?.full_name 
-          : f.profiles?.full_name,
-        avatarUrl: f.addressee_id === user.id 
-          ? f.profiles?.avatar_url 
-          : f.profiles?.avatar_url,
-        status: 'accepted',
-        createdAt: f.created_at,
-      }));
+      const friendsList: Friend[] = (friendships || []).map((f) => {
+        const isAddressee = f.addressee_id === user.id;
+        const friendId = isAddressee ? f.requester_id : f.addressee_id;
+        const profile = isAddressee ? f.requester : f.addressee;
+
+        return {
+          id: friendId,
+          userId: friendId,
+          username: profile?.username || 'unknown',
+          fullName: profile?.full_name || null,
+          avatarUrl: profile?.avatar_url || null,
+          status: 'accepted',
+          createdAt: f.created_at,
+        };
+      });
 
       // Get pending requests (where user is addressee)
       const { data: requests } = await supabase
@@ -158,9 +158,8 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
       // Check if request already exists
       const { data: existing } = await supabase
         .from('friendships')
-        .select('id')
-        .eq('requester_id', user.id)
-        .eq('addressee_id', userId)
+        .select('requester_id')
+        .or(`and(requester_id.eq.${user.id},addressee_id.eq.${userId}),and(requester_id.eq.${userId},addressee_id.eq.${user.id})`)
         .single();
 
       if (existing) {
@@ -215,8 +214,7 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
       const { error } = await supabase
         .from('friendships')
         .delete()
-        .eq('requester_id', user.id)
-        .eq('addressee_id', userId);
+        .or(`and(requester_id.eq.${user.id},addressee_id.eq.${userId}),and(requester_id.eq.${userId},addressee_id.eq.${user.id})`);
 
       if (!error) {
         set((state) => ({

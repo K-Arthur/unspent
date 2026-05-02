@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, Image } from 'react-native';
+import { Alert, View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { usernameSchema } from '@unspent/shared/schemas';
+import { useAuthStore } from '../../src/hooks/useAuthStore';
 import { colors } from '../../src/constants/colors';
 
 const slides = [
@@ -28,9 +30,14 @@ const slides = [
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const signUp = useAuthStore((state) => state.signUp);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [birthDate, setBirthDate] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [step, setStep] = useState<'slides' | 'age-gate' | 'signup'>('slides');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNext = () => {
     if (currentSlide < slides.length - 1) {
@@ -45,6 +52,7 @@ export default function OnboardingScreen() {
     const age = getAge(birth);
     
     if (isNaN(age)) {
+      Alert.alert('Invalid date', 'Enter your birth date as MM/DD/YYYY.');
       return;
     }
     
@@ -54,6 +62,43 @@ export default function OnboardingScreen() {
     }
     
     setStep('signup');
+  };
+
+  const handleSignUp = async () => {
+    const usernameResult = usernameSchema.safeParse(username.trim());
+    if (!usernameResult.success) {
+      Alert.alert('Username issue', usernameResult.error.issues[0]?.message ?? 'Enter a valid username.');
+      return;
+    }
+
+    if (!email.trim() || !email.includes('@')) {
+      Alert.alert('Email issue', 'Enter a valid email address.');
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert('Password issue', 'Use at least 8 characters.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const { error, needsEmailConfirmation } = await signUp(email.trim(), password, {
+      username: usernameResult.data,
+      birthDate: new Date(birthDate).toISOString().slice(0, 10),
+    });
+    setIsSubmitting(false);
+
+    if (error) {
+      Alert.alert('Could not sign up', error.message);
+      return;
+    }
+
+    if (needsEmailConfirmation) {
+      Alert.alert('Check your email', 'Confirm your email address, then return to Unspent to continue.');
+      return;
+    }
+
+    router.replace('/(tabs)');
   };
 
   const getAge = (birthDate: Date): number => {
@@ -138,10 +183,23 @@ export default function OnboardingScreen() {
 
         <TextInput
           style={styles.input}
+          placeholder="Username"
+          placeholderTextColor={colors.textSecondary}
+          autoCapitalize="none"
+          autoCorrect={false}
+          value={username}
+          onChangeText={setUsername}
+        />
+
+        <TextInput
+          style={styles.input}
           placeholder="Email"
           placeholderTextColor={colors.textSecondary}
           keyboardType="email-address"
           autoCapitalize="none"
+          autoComplete="email"
+          value={email}
+          onChangeText={setEmail}
         />
 
         <TextInput
@@ -149,10 +207,17 @@ export default function OnboardingScreen() {
           placeholder="Password"
           placeholderTextColor={colors.textSecondary}
           secureTextEntry
+          autoComplete="password-new"
+          value={password}
+          onChangeText={setPassword}
         />
 
-        <Pressable style={styles.button} onPress={() => router.replace('/(tabs)')}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+        <Pressable
+          style={[styles.button, isSubmitting && styles.buttonDisabled]}
+          onPress={handleSignUp}
+          disabled={isSubmitting}
+        >
+          <Text style={styles.buttonText}>{isSubmitting ? 'Creating account...' : 'Sign Up'}</Text>
         </Pressable>
 
         <Pressable style={styles.skipButton} onPress={() => router.replace('/(tabs)')}>
@@ -263,6 +328,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonText: {
     fontSize: 18,

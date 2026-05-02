@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Image, Linking } from 'react-native';
+import { Alert, View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useAuthStore } from '../src/hooks/useAuthStore';
@@ -17,7 +17,7 @@ export default function UpgradeScreen() {
     const { url, error } = await createCheckoutSession(selectedPlan);
 
     if (error) {
-      console.log('Checkout error:', error);
+      Alert.alert('Checkout unavailable', error.message);
       return;
     }
 

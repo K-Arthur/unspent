@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable, Alert, ScrollView, Image } from 'react-native';
 import { useRouter, useNavigation } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import * as Linking from 'expo-linking';
+import { useAuthStore } from '../../src/hooks/useAuthStore';
 import { useWishlistStore } from '../../src/hooks/useWishlistStore';
 import { colors } from '../../src/constants/colors';
 
@@ -16,7 +16,9 @@ type LinkPreviewResponse = {
 export default function AddItemScreen() {
   const router = useRouter();
   const navigation = useNavigation();
+  const supabase = useAuthStore((state) => state.supabase);
   const { addItem, isLoading } = useWishlistStore();
+  const submittedRef = useRef(false);
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -26,12 +28,14 @@ export default function AddItemScreen() {
   const [mode, setMode] = useState<'url' | 'screenshot'>('url');
 
   // Warn before losing unsaved form data
-  const hasFormData = title.trim() || description.trim() || link.trim() || price.trim() || imageUrl;
+  const hasFormData = Boolean(title.trim() || description.trim() || link.trim() || price.trim() || imageUrl);
 
   useEffect(() => {
     if (!hasFormData) return;
 
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (submittedRef.current) return;
+
       e.preventDefault();
       Alert.alert(
         'Discard item?',
@@ -61,8 +65,8 @@ export default function AddItemScreen() {
         setLink(clipboard);
         await fetchLinkMetadata(clipboard);
       }
-    } catch (error) {
-      console.log('Clipboard access failed');
+    } catch {
+      Alert.alert('Paste unavailable', 'Clipboard access is not available on this device.');
     }
   };
 
@@ -71,16 +75,25 @@ export default function AddItemScreen() {
       const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
       
-      if (!supabaseUrl || !supabaseKey) return;
+      if (!supabase || !supabaseUrl || !supabaseKey) return;
+
+      const parsedUrl = new URL(url);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) return;
 
       const response = await fetch(`${supabaseUrl}/functions/v1/preview-link`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': supabaseKey,
         },
         body: JSON.stringify({ url }),
       });
+
+      if (!response.ok) return;
 
       const data = (await response.json()) as LinkPreviewResponse;
       
@@ -88,8 +101,8 @@ export default function AddItemScreen() {
       if (data.description && !description) setDescription(data.description);
       if (data.image && !imageUrl) setImageUrl(data.image);
       if (data.price && !price) setPrice((data.price / 100).toString());
-    } catch (error) {
-      console.log('Failed to fetch metadata');
+    } catch {
+      return;
     }
   };
 
@@ -130,12 +143,14 @@ export default function AddItemScreen() {
       return;
     }
 
-    if (!price || parseFloat(price) <= 0) {
+    const parsedPrice = Number.parseFloat(price);
+
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
       Alert.alert('Required', 'Please enter a valid price');
       return;
     }
 
-    const priceInCents = Math.round(parseFloat(price) * 100);
+    const priceInCents = Math.round(parsedPrice * 100);
 
     const { error } = await addItem({
       title: title.trim(),
@@ -150,6 +165,7 @@ export default function AddItemScreen() {
       return;
     }
 
+    submittedRef.current = true;
     router.back();
   };
 

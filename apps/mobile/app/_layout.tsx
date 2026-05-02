@@ -1,6 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { Pressable, Text } from 'react-native';
+import { useAuthStore } from '../src/hooks/useAuthStore';
 import '../src/globals.css';
 
 /** Shared header style matching the app's warm cream palette */
@@ -15,6 +17,20 @@ const headerTintColor = '#2D2D2D';
 
 export default function RootLayout() {
   const router = useRouter();
+  const initializeAuth = useAuthStore((state) => state.initialize);
+  const setSession = useAuthStore((state) => state.setSession);
+
+  useEffect(() => {
+    const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setSession(null);
+      return;
+    }
+
+    initializeAuth(supabaseUrl, supabaseAnonKey);
+  }, [initializeAuth, setSession]);
 
   return (
     <>

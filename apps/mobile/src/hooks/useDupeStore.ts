@@ -99,11 +99,17 @@ export const useDupeStore = create<DupeState>((set, get) => ({
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('Please sign in before searching for dupes');
+      }
+
       const response = await fetch(`${supabaseUrl}/functions/v1/search-dupes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': supabaseKey,
         },
         body: JSON.stringify({ itemId }),
       });

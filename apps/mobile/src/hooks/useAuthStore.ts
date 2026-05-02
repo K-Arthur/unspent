@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { User, Session } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Profile {
   id: string;
@@ -27,7 +28,11 @@ interface AuthState {
   supabase: SupabaseClient | null;
   
   initialize: (supabaseUrl: string, supabaseAnonKey: string) => void;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    options?: { username?: string; birthDate?: string }
+  ) => Promise<{ error: Error | null; needsEmailConfirmation?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signInWithOAuth: (provider: 'google' | 'apple') => Promise<void>;
   signInWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
@@ -54,11 +59,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   supabase: null,
 
   initialize: (supabaseUrl, supabaseAnonKey) => {
+    if (get().supabase) return;
+
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: true,
         persistSession: true,
-        detectSessionInUrl: true,
+        detectSessionInUrl: false,
+        storage: AsyncStorage,
       },
     });
     
@@ -80,6 +88,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         await get().fetchProfile();
       }
     });
+
+    void supabase.auth.getSession().then(async ({ data }) => {
+      const session = data.session;
+      const user = session?.user ?? null;
+      const isPremium = user ? await get().fetchPremiumStatus(user.id) : false;
+
+      set({
+        session,
+        user,
+        isAuthenticated: !!user,
+        isPremium,
+        isLoading: false,
+      });
+
+      if (user) {
+        await get().fetchProfile();
+      }
+    }).catch(() => {
+      set({ isLoading: false });
+    });
   },
 
   fetchPremiumStatus: async (userId: string) => {
@@ -96,12 +124,48 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     return checkPremium(data?.current_period_end);
   },
 
-  signUp: async (email, password) => {
+  signUp: async (email, password, options) => {
     const { supabase } = get();
     if (!supabase) return { error: new Error('Supabase not initialized') };
     
-    const { error } = await supabase.auth.signUp({ email, password });
-    return { error: error ?? null };
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username: options?.username,
+          birth_date: options?.birthDate,
+        },
+      },
+    });
+
+    if (error) return { error };
+
+    if (!data.session || !data.user) {
+      return { error: null, needsEmailConfirmation: true };
+    }
+
+    set({
+      session: data.session,
+      user: data.user,
+      isAuthenticated: true,
+      isLoading: false,
+    });
+
+    if (options?.username) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: data.user.id,
+          username: options.username,
+          birth_date: options.birthDate,
+        });
+
+      if (profileError) return { error: profileError };
+      await get().fetchProfile();
+    }
+
+    return { error: null };
   },
 
   signIn: async (email, password) => {
@@ -137,7 +201,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!supabase) return;
     
     await supabase.auth.signOut();
-    set({ user: null, session: null, isAuthenticated: false, profile: null });
+    set({ user: null, session: null, isAuthenticated: false, isPremium: false, profile: null });
   },
 
   refreshSession: async () => {
