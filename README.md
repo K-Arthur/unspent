@@ -6,6 +6,22 @@ Turn impulse-buy regret into a daily, gamified habit. Women paste items they wan
 
 ---
 
+## Documentation
+
+> **Full documentation available in [`/docs`](./docs/)**
+
+| Section | Description |
+|---------|-------------|
+| [Docs Hub](./docs/README.md) | Documentation index, tech stack, quick reference |
+| [API Reference](./docs/api-reference/EDGE_FUNCTIONS.md) | 6 Supabase Edge Functions |
+| [Configuration](./docs/configuration/ENVIRONMENT_VARIABLES.md) | 60+ environment variables reference |
+| [Database Schema](./docs/database/SCHEMA.md) | 7 tables, RLS policies, functions, migrations |
+| [Deployment](./docs/deployment/) | Vercel (web), EAS (mobile), Supabase local |
+| [Changelog](./CHANGELOG.md) | Project changelog (Keep a Changelog) |
+| [Contributing](./CONTRIBUTING.md) | Guidelines for contributors + AI agents |
+
+---
+
 ## Monorepo Structure
 
 ```
@@ -27,13 +43,13 @@ Turn impulse-buy regret into a daily, gamified habit. Women paste items they wan
 
 | Layer | Technology | Why |
 |-------|--------------|------|
-| **Mobile** | Expo SDK 52+, React Native | Hot-reload, OTA updates, iOS + Android |
-| **Backend** | Supabase (Postgres, Auth, Realtime, Storage) | Instant scalable DB, RLS, built-in auth |
-| **Web** | Next.js 14+ (App Router), TailwindCSS | SEO, OG images, share-card previews |
+| **Mobile** | Expo SDK 54+, React Native 0.81.5, React 19 | Hot-reload, OTA updates, iOS + Android |
+| **Backend** | Supabase (Postgres 17, Auth, Edge Functions, Storage) | Instant scalable DB, RLS, built-in auth |
+| **Web** | Next.js 15.5.15 (App Router), React 19, TailwindCSS 3.4 | SEO, OG images, share-card previews |
 | **Payments** | Stripe (web) + RevenueCat (mobile) | Subscriptions, IAP compliance |
-| **AI Dupe Engine** | OpenAI GPT-4o-mini + SerpAPI | Cheaper alternatives, $0.01/call |
-| **Analytics** | PostHog | Funnels, retention, virality coefficient |
-| **Deployment** | Vercel (web) + EAS Build (mobile) | Instant CDN, TestFlight |
+| **AI Dupe Engine** | OpenAI GPT-4o-mini + Serper API | Cheaper alternatives, ~$0.01/call |
+| **Analytics** | PostHog + Sentry | Funnels, retention, virality coefficient, error tracking |
+| **Deployment** | Vercel (web, Node 22.x) + EAS Build (mobile) | Instant CDN, TestFlight |
 
 ---
 
@@ -50,27 +66,27 @@ Turn impulse-buy regret into a daily, gamified habit. Women paste items they wan
 - Drop items into "The Court" for community voting
 - Real-time vote counts (Buy / Pass / Dupe it)
 - Vote reasons (chips: "Too expensive", "Wait for sale", etc.)
-- 72-hour verdict (auto-pass if not enough votes)
-- Push notifications for results
+- 72-hour verdict (auto-pass if not enough votes) — *Threshold: 3 votes*
+- Push notifications for results — *Planned*
 
 ### ✅ Phase 3: Dupe Engine
-- AI-powered cheaper alternative search
-- SerpAPI (Google Shopping) + OpenAI enhancement
+- AI-powered cheaper alternative search — *Planned (Serper API integrated)*
+- Serper API (Google Shopping) + OpenAI enhancement
 - Confidence scoring (0-1)
-- Affiliate links (Skimlinks/Amazon Associates)
-- Premium feature (free users get 1 blurred dupe)
+- Affiliate links (Skimlinks/Amazon Associates) — *Planned*
+- Premium feature (free users get 3 dupe lookups/week)
 
 ### ✅ Phase 4: Monetization
-- Stripe Checkout integration
-- RevenueCat for mobile IAP (Apple/Google compliance)
-- Premium features: unlimited friends, dupe lookups, premium share cards
-- $4.99/month or $39.99/year
+- Stripe Checkout integration — *Planned*
+- RevenueCat for mobile IAP (Apple/Google compliance) — *Planned*
+- Premium features: unlimited friends, dupe lookups, premium share cards — *Partial*
+- $4.99/month or $39.99/year (configurable via env vars)
 
 ### ✅ Phase 5: Virality
 - Share cards (SVG/OG images) with QR codes
 - Deep linking (unspent.app/court/{id})
-- Referral system (invite friends → premium trial)
-- TikTok/Instagram-ready shareable content
+- Referral system (invite friends → premium trial) — *Planned*
+- TikTok/Instagram-ready shareable content — *Planned*
 
 ---
 
@@ -167,10 +183,12 @@ eas submit --latest                              # Submit to App Store
 
 ## Testing Strategy
 
-- **Unit Tests**: Vote outcome calculation, savings tally, cooldown expiry
-- **Integration Tests**: Supabase edge functions with local DB
-- **E2E Tests**: Detox for sign-up, add item, vote flows
-- **Manual QA**: TestFlight checklist for free/premium gates, share cards, deep links
+> **Current Status:** No automated tests found. Add tests when implementing features.
+
+- **Unit Tests**: Vote outcome calculation, savings tally, cooldown expiry — *Planned*
+- **Integration Tests**: Supabase edge functions with local DB — *Planned*
+- **E2E Tests**: Detox for sign-up, add item, vote flows — *Planned*
+- **Manual QA**: TestFlight checklist for free/premium gates, share cards, deep links — *Planned*
 
 ---
 
